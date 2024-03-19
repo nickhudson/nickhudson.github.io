@@ -137,15 +137,17 @@ dialog#splash {
 	text-align: center;
 	animation-name: splashOpen;
 	animation-duration: 0.45s;
-	img#sp-logo {
-		max-width: 100%;
-		width: 21.875em;
-	}
-	p {
-		font-size: 2em;
-		margin: 0em;
-		padding-top: 2em;
-	}
+}
+
+dialog#splash p {
+	font-size: 2em;
+	margin: 0em;
+	padding-top: 2em;
+}
+
+dialog#splash img#sp-logo {
+	max-width: 100%;
+	width: 21.875em;
 }
 
 dialog#splash::backdrop {
@@ -188,12 +190,15 @@ input, input[type], input::file-selector-button {
 	outline: 0;
 	box-shadow: none;
 	background-color: #44363a;
+	border-radius: 0;
 	font-size: 1em;
 }
 
 input::file-selector-button {
 	padding: 0.5rem 1rem;
 	border-right: 2px solid #654c53;
+	-webkit-appearance: none;
+	appearance: none;
 	color: #fdc671;
 }
 
@@ -202,6 +207,7 @@ button, input[type=button] {
 	border: 0;
 	outline: 0;
 	background-color: #fdc671;
+	border-radius: 0;
 	font-size: 1em;
 }
 
@@ -320,10 +326,8 @@ label[for=upload] {
 }
 
 @media screen and (max-width: 1040px) {
-	dialog#splash {
-		img#sp-logo {
-			width: 18em;
-		}
+	dialog#splash img#sp-logo {
+		width: 18em;
 	}
 
 	#form-upload {
@@ -353,10 +357,8 @@ label[for=upload] {
 		font-size: 3.865vw;
 	}
 
-	dialog#splash {
-		img#sp-logo {
-			width: 14em;
-		}
+	dialog#splash img#sp-logo {
+		width: 14em;
 	}
 
 	#mn-logo {
