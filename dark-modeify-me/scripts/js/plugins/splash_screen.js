@@ -8,7 +8,7 @@ const splash = document.getElementById('splash'),
 addEventListener(
 	'py:ready', 
 	function ssDisplay() {
-		// splashCL.add(closeClass);
+		splashCL.add(closeClass);
 
 		setTimeout(() => {
 			if (splashCL.contains(closeClass)) {
