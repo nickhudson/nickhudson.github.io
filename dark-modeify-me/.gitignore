@@ -2,5 +2,6 @@
 
 # misc
 .DS_Store
-.git
-**/.git
+file-assets/tests/
+file-assets/images/
+__pycache__/
