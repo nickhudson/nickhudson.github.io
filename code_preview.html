@@ -11,18 +11,20 @@
 		<!--scripts-->
 		<script type="text/javascript">
 			const mainEl = document.getElementById('main'),
-						codeStr = window.location.search.replace('?codeString=', '');
+						codeStr = window.location.search.replace('?codeString=', ''),
+						axios = window['axios'] || null;
 
 			const testBlobURL = 'https://coda-us-west-2-prod-blobs-upload.s3.us-west-2.amazonaws.com/packsBlobs/3d7a6801fc638951afff91d01589f6dd3d69639d571a61be8d17f30432cbdb54?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAQNTH22RIWFX5KEBE/20240511/us-west-2/s3/aws4_request&X-Amz-Date=20240511T043028Z&X-Amz-Expires=900&X-Amz-Security-Token=IQoJb3JpZ2luX2VjENT//////////wEaCXVzLXdlc3QtMiJHMEUCIQDPCRerp1hHZzjHySasU3WODH8Hfcqg6iwjQjXVV4qBtwIgM/+u5Q2yvJjSeU8SJRSjEyf1ahiQKISAQLhcNzyU18QqhwUIPRAAGgwwMjkyMDg3OTQxOTMiDPJOJVmx9TtKaEt6HCrkBJg5R40ukChAWoRFxL149HhUFXxNflsZXXB7B3O1GYIvLKlJEgyfAn+ki7YDaCGsV/I0KNtRq0QxzPwSU72ButmFy6x/UM8ky7QKvbqe+BBMWjg649VjSD6ZVrVeSj5LQC6cnctdowftsyRi1uSXWPfFHl0+yRO8z4HfDzqsNsGB1i3ox9lx8xNHgyVncFGxbuU0U6tTP58/Fqz2CObhtDsawwY65z4C8T8ATPzjJuVpdv0ymSc15LA/omJt9mA7D4SZC4M8v2jZdKeMzg6MBIHQqVcDtNXpCAygs5cXhWjWMAzO1etV9PD7LEr0A09+oJADdyvrMRoCOnNs3wfDCW0b/ZGBOCZKboXqir1HrmYBwAc4+kGl0KGKb/b30VWhslFg7rQXkna1Y+cqjLiyblS9DzVEeRLd4k1wLqQeMbAzjOlw4f4xnxQyLiyqs+i7CNPXEJf4p2y9ZCUWlFyRGCXUEZdUhVuOL5rIlb3XhqKcgqBD3whbw0Pyw09yi7kdspFdY7pwfEzh2XYW5EufX3ypN5vIgOMhxb2tuHxii2p57MBOpJaUXHT1KLpXR2//bathXdfozlN/qtp3407nspKSzy2hVVU4tj13rtRR/Sza+gyM3LcqrkQChwiVZcU+knXMJUhMy07nu5IOW5Zs3Z8c0bOcu2K1nxi4AbrSsZGcgqqT8ML/7vhgnyALB/h6nAX6bZyIKHQd1csyS16cgFo2UHgnj9rNYbYD0/7q9oghE7wu3i1XMhQHJCyOacbro8/1fPRs+EBqWg5ISTSvOlPJzXQfjaxAm78yB6GGdHRghKM1YDCL4PuxBjqaAX7H270DYasmvDUboaS24VSoI0FCZreL15CwoEMcfEwb5FtjcKw0c0rpBRus2Tmq+qOnaDLUaif3ES7kDRc/psKbrobbXRMdJykBCYMBFlYw4W7L8xQ8hjnrXKp4Rj1nrt2tbpku6taiSEXppLiD+RtfzdbMKDRpYFzWeoQLhM+e5bxH/6EcdKTsBICOSCIsjnONYxOqwhvKPK0=&X-Amz-Signature=1a4d7f75b2a38d2327949c8b5b3a64077f22f20b12482d4ab6aa21e15d56dc5f&X-Amz-SignedHeaders=host&x-id=GetObject';
 
 			console.log(window.location);
 
 			if (
+				axios &&
 				testBlobURL.startsWith('https:') && 
 				testBlobURL.includes('blobs')
 			) {
 				console.log('Hey blobby!!!');
-				console.log(window.axios)
+				console.log(axios)
 
 				async function getBlobCode() {
 					/* const blobCode = await fetch(testBlobURL, {
@@ -35,7 +37,7 @@
 						}
 					}) */
 
-					const blobCode = await window.axios({
+					const blobCode = await axios({
 						method: 'get',
 						mode: 'cors',
 						url: testBlobURL,
@@ -46,9 +48,12 @@
 						},
 						proxy: {
 							protocol: 'https',
-							host: 'coda.io',
+							host: 'coda-us-west-2-prod-blobs-upload.s3.us-west-2.amazonaws.com',
 							port: 9900
 						}
+					}).then(res => {
+						console.log(res);
+						return res;
 					})
 
 					console.log(blobCode)
