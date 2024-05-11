@@ -1,19 +1,64 @@
 <html>
 	<head>
 		<style>
-			body { margin: 0; padding: 0; border: 0; }
-
-			iframe { width: 100%; height: 100%; border: 0; }
+			body { margin: 0; padding: 0; border: 0; background-color: #ffffff; }
+			iframe { width: 100%; height: 100%; border: 0; background-color: transparent; }
 		</style>
+		<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 	</head>
 	<body>
 		<iframe id="main"></iframe>
 		<!--scripts-->
 		<script type="text/javascript">
-			console.log(window.location);
-			console.log(document.getElementById('main'));
+			const mainEl = document.getElementById('main'),
+						codeStr = window.location.search.replace('?codeString=', '');
 
-			document.getElementById('main').srcdoc = decodeURIComponent(window.location.search).replace('?codeString=', '');
+			const testBlobURL = 'https://coda-us-west-2-prod-blobs-upload.s3.us-west-2.amazonaws.com/packsBlobs/3d7a6801fc638951afff91d01589f6dd3d69639d571a61be8d17f30432cbdb54?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAQNTH22RIWFX5KEBE%2F20240511%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20240511T043028Z&X-Amz-Expires=900&X-Amz-Security-Token=IQoJb3JpZ2luX2VjENT%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMiJHMEUCIQDPCRerp1hHZzjHySasU3WODH8Hfcqg6iwjQjXVV4qBtwIgM%2F%2Bu5Q2yvJjSeU8SJRSjEyf1ahiQKISAQLhcNzyU18QqhwUIPRAAGgwwMjkyMDg3OTQxOTMiDPJOJVmx9TtKaEt6HCrkBJg5R40ukChAWoRFxL149HhUFXxNflsZXXB7B3O1GYIvLKlJEgyfAn%2Bki7YDaCGsV%2FI0KNtRq0QxzPwSU72ButmFy6x%2FUM8ky7QKvbqe%2BBBMWjg649VjSD6ZVrVeSj5LQC6cnctdowftsyRi1uSXWPfFHl0%2ByRO8z4HfDzqsNsGB1i3ox9lx8xNHgyVncFGxbuU0U6tTP58%2FFqz2CObhtDsawwY65z4C8T8ATPzjJuVpdv0ymSc15LA%2FomJt9mA7D4SZC4M8v2jZdKeMzg6MBIHQqVcDtNXpCAygs5cXhWjWMAzO1etV9PD7LEr0A09%2BoJADdyvrMRoCOnNs3wfDCW0b%2FZGBOCZKboXqir1HrmYBwAc4%2BkGl0KGKb%2Fb30VWhslFg7rQXkna1Y%2BcqjLiyblS9DzVEeRLd4k1wLqQeMbAzjOlw4f4xnxQyLiyqs%2Bi7CNPXEJf4p2y9ZCUWlFyRGCXUEZdUhVuOL5rIlb3XhqKcgqBD3whbw0Pyw09yi7kdspFdY7pwfEzh2XYW5EufX3ypN5vIgOMhxb2tuHxii2p57MBOpJaUXHT1KLpXR2%2F%2FbathXdfozlN%2Fqtp3407nspKSzy2hVVU4tj13rtRR%2FSza%2BgyM3LcqrkQChwiVZcU%2BknXMJUhMy07nu5IOW5Zs3Z8c0bOcu2K1nxi4AbrSsZGcgqqT8ML%2F7vhgnyALB%2Fh6nAX6bZyIKHQd1csyS16cgFo2UHgnj9rNYbYD0%2F7q9oghE7wu3i1XMhQHJCyOacbro8%2F1fPRs%2BEBqWg5ISTSvOlPJzXQfjaxAm78yB6GGdHRghKM1YDCL4PuxBjqaAX7H270DYasmvDUboaS24VSoI0FCZreL15CwoEMcfEwb5FtjcKw0c0rpBRus2Tmq%2BqOnaDLUaif3ES7kDRc%2FpsKbrobbXRMdJykBCYMBFlYw4W7L8xQ8hjnrXKp4Rj1nrt2tbpku6taiSEXppLiD%2BRtfzdbMKDRpYFzWeoQLhM%2Be5bxH%2F6EcdKTsBICOSCIsjnONYxOqwhvKPK0%3D&X-Amz-Signature=1a4d7f75b2a38d2327949c8b5b3a64077f22f20b12482d4ab6aa21e15d56dc5f&X-Amz-SignedHeaders=host&x-id=GetObject';
+
+			console.log(window.location);
+
+			if (
+				testBlobURL.startsWith('https:') && 
+				testBlobURL.includes('blobs')
+			) {
+				console.log('Hey blobby!!!');
+				console.log(window.axios)
+
+				async function getBlobCode() {
+					/* const blobCode = await fetch(testBlobURL, {
+						method: 'GET',
+						mode: 'cors',
+						headers: {
+							contentType: 'text/html',
+							'Access-Control-Allow-Origin': '*',
+							'Access-Control-Allow-Headers': '*'
+						}
+					}) */
+
+					const blobCode = await window.axios({
+						method: 'get',
+						mode: 'cors',
+						url: testBlobURL,
+						headers: {
+							contentType: 'text/html',
+							'Access-Control-Allow-Origin': '*',
+							'Access-Control-Allow-Headers': '*'
+						},
+						proxy: {
+							protocol: 'https',
+							host: 'coda.io',
+							port: 9900
+						}
+					})
+
+					console.log(blobCode)
+				}
+
+				getBlobCode()
+				mainEl.srcdoc = decodeURIComponent(testBlobURL);
+			} else {
+				mainEl.srcdoc = decodeURIComponent(codeStr);
+			}
 		</script>
 		<!--//scripts-->
 	</body>
