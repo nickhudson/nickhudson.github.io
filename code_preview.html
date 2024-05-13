@@ -4,71 +4,45 @@
 			body { margin: 0; padding: 0; border: 0; background-color: #ffffff; }
 			iframe { width: 100%; height: 100%; border: 0; background-color: transparent; }
 		</style>
-		<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 	</head>
 	<body>
 		<iframe id="main"></iframe>
 		<!--scripts-->
 		<script type="text/javascript">
 			const mainEl = document.getElementById('main'),
-						codeStr = window.location.search.replace('?codeString=', ''),
-						fileReader = new FileReader,
-						axios = window['axios'] || null;
-
-			const testBlobURL = 'https://coda-us-west-2-prod-blobs-upload.s3.us-west-2.amazonaws.com/packsBlobs/3d7a6801fc638951afff91d01589f6dd3d69639d571a61be8d17f30432cbdb54?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAQNTH22RIY2IFRAMW%2F20240511%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20240511T145213Z&X-Amz-Expires=900&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEN7%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMiJGMEQCIHZ87vaau7Zz1Oo18rU24OyWs5eEbVtZMyN3dcTF9x0zAiAPav83bisd8uV1R0l2I93YwVcMDZytQT0tID6YO5uaASqHBQhHEAAaDDAyOTIwODc5NDE5MyIMp34ljsEuDbTu8v5%2BKuQEQI90R3m7lK4p4iBU7DPEgG%2FRaQkgNHBQiXXC3%2BQeIs9zBLdxuJCOLwpkEM0GGGbLvcnq86dBk6JfH9poIgKj3AmLx3lxzE0PTJ7V12FiURU2K9W36KCPgVtcALYGxmqMVhiBIwvoDqgms3WsX8M5BsuhmWwBO2nk%2FdjVRpF259%2F6ZOi8XzYTKeGAMsRwogbiXEy%2Fvms1PuWmFmWe%2FRlij254Ia%2FThGwmhA2l%2BjcOd9Y%2FQlKvd6FCEEC5QVLRBr8IOm98NLIhwA1tFUGTnH74rfPgCyo9rgOp3l6HZ5Iz4jKMicF7HoQ%2FpycNsf%2B78qyUkrwpirTYvZDbWyGK6zNVmC17seawIC3XkEYKzDxgaNWIwFhBnTGpt8ShETuo%2FKgRmZnssBZ9FNilnR6LlvmVztVcLbaZeyZJ9DKUkh5QQ%2FgjrHi4mqWw%2B04imTAu0V3vjeIgb01JuBkreGV5nfZP9LHHO9hx%2FT08rvmoZZudQ182a3muN3KwoXXRRXCin5CX118%2FntIkQgUWDcBtEMEGVe4QnExLFrsNETqzl1x%2F0GFFwd%2B42lEEJFUdUikp94cKWvEWl69GjtMLZ3rmKc9qrXwCRP%2FEvSY5cKhJKV7Qmc3mKddgMA4bfzUxQZwXYDQIe%2FGRRt0uM2XcG5a6ylcZWfYnGZyfjIVQ83b6yhxZAI6YGRQgevJTJ5tlNx3ZvJDr%2FCaKATn1kMUWBVcwXSMki8f4MiD3bceD4hEgZWLdTShD2bixuWdP%2B0aQeuRIqYEvjzPm7eGk0UYZLJAIzHXadNyyUEBxBmbi78LNIxo9ZJCzcoDRMN%2F3%2FbEGOpsBWuJbCtI%2F%2BAbrdPya1YEcEz3%2B2rcq7R3Itu%2BIKIxucyGuHfJA9DN41iVzUaIqnwqTtY4yLvdakXitmrJGhQjkfVLdEd1KcSNaD%2FODwVNCKAECEML9z82a4%2FH6fx7u7JS2ZOq7xlYJR6Nz6KSQNen7Y%2BZeyWc4wBAFLrUkBFFIdCDs8nWkwHoxKs43P7WJk%2BM0Engx3SKX3wIxW20%3D&X-Amz-Signature=3b99d2bd571bca62722d25b9e2efb55548eb9d53550386daf185223c6a738f73&X-Amz-SignedHeaders=host&x-id=GetObject';
-
-			console.log(window.location);
-
+						codeStr = window.location.search.replace('?codeString=', '');
+						
 			if (
-				axios &&
-				testBlobURL.startsWith('https:') && 
-				testBlobURL.includes('blobs')
+				codeStr.startsWith('https:') && 
+				codeStr.includes('blobs')
 			) {
-				console.log('Hey blobby!!!');
-				// console.log(axios)
-				// console.log(fileReader.readAsDataURL(testBlobURL))
-
 				async function getBlobCode() {
-					/* const blobCode = await fetch(testBlobURL, {
-						method: 'GET',
-						mode: 'cors',
-						headers: {
-							contentType: 'text/html',
-							'Access-Control-Allow-Origin': '*',
-							'Access-Control-Allow-Headers': '*'
+					const blobCode = await fetch(
+						'https://us-central1-my-website-b71e9.cloudfunctions.net/code_preview', 
+						{
+							method: 'POST',
+							mode: 'cors',
+							headers: {
+								'Access-Control-Allow-Origin': '*',
+								'Content-Type': 'application/json'
+							},
+							body: JSON.stringify({ 
+								data: codeStr 
+							})
 						}
-					}) */
+					).then(res => {
+						return res.text();
+					}).then(data => {
+						return data;
+					}).catch(err => {
+						console.error(err);
+						return err;
+					});
 
-					function handleResponse(data) {
-							// Handle the response data here
-							console.log(data)
-							return data;
-					}
-
-					const script = document.createElement('script');
-					script.src = `${testBlobURL}&callback=handleResponse`;
-					document.body.appendChild(script);
-
-					/* const blobCode = await axios({
-						'method': 'GET',
-						'url': testBlobURL,
-						mode: 'cors',
-						responseType: 'blob',
-						withCredentials: false,
-						headers: {
-							'Access-Control-Allow-Origin': '*',
-							'Access-Control-Allow-Headers': 'X-Requested-With,content-type'
-						}
-					}).then(res => {
-						console.log(res);
-						return res;
-					}) */
-
-					// console.log(blobCode)
+					mainEl.srcdoc = blobCode;
 				}
 
-				getBlobCode()
-				mainEl.srcdoc = testBlobURL;
+				getBlobCode();
 			} else {
 				mainEl.srcdoc = decodeURIComponent(codeStr);
 			}
