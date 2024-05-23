@@ -1,3 +1,13 @@
+// Google Analytics
+window.dataLayer = window.dataLayer || [];
+
+function gtag() {
+	dataLayer.push(arguments);
+}
+
+gtag('js', new Date());
+gtag('config', 'G-WMPJ15XJ5M');
+
 // Declare web worker constant for browsers that support workers
 const processWorker = window.Worker ? new Worker('./scripts/js/worker.js') : null;
 
