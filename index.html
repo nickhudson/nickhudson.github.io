@@ -1,0 +1,38 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>dark-modeify me!</title>
+		<meta name="description" content="Make your emails dark-mode friendly with just a click of a button!">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="./css/styles.css" />
+		<link rel="stylesheet" href="https://pyscript.net/releases/2024.3.1/core.css" />
+		<script async src="https://www.googletagmanager.com/gtag/js?id=G-WMPJ15XJ5M"></script>
+		<script src="./scripts/js/main.js"></script>
+		<script type="module" src="https://pyscript.net/releases/2024.3.1/core.js"></script>
+		<script type="module" src="./scripts/js/plugins/splash_screen.js"></script>
+	</head>
+	<body>
+		<dialog id="splash">
+			<img id="sp-logo" src="./images/dmify-logo-lgt-sq-002.svg" width="350" />
+			<p>Loading...</p>
+		</dialog>
+		<section class="main">
+			<img id="mn-logo" src="./images/dmify-logo-lgt-ls-002.svg" height="56" />
+			<form id="form-upload">
+				<label for="upload">Upload a file:</label>
+				<input id="upload" type="file" />
+				<button type="button" id="process" disabled>Update File</button>
+				<button type="button" id="download" disabled>Download File</button>
+			</form>
+			<section id="content" class="hidden">
+				<nav id="content-nav">
+					<a class="close" href="#"><img src="./images/close-001.svg" width="36" /></a>
+					<a id="view-mode" href="#" data-view-mode="design">View Code</a>
+				</nav>
+				<iframe id="output"></iframe>
+				<pre id="output-code" class="hidden"></pre>
+			</section>
+		</section>
+		<script type="py" src="./scripts/python/main.py" config="./pyscript.toml"></script>
+	</body>
+</html>
