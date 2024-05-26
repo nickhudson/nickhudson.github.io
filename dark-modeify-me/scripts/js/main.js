@@ -5,6 +5,32 @@ function gtag() {
 	dataLayer.push(arguments);
 }
 
+function trackInput(event='') {
+	if (event) {
+		const targ = event?.target,
+					labels = targ.labels ? targ.labels[0] : undefined;
+
+		gtag('event', 'user_input', {
+			input_type: event?.type,
+			js_name: event?.constructor.name,
+			value:
+				targ.value ||
+				targ.outerHTML ||
+				targ.innerHTML ||
+				targ.alt ||
+				'input',
+			description:
+				targ.innerText ||
+				targ.outerText ||
+				labels?.innerText ||
+				targ.alt ||
+				targ.name ||
+				targ.placeholder ||
+				'N/A'
+		});
+	}
+}
+
 gtag('js', new Date());
 gtag('config', 'G-WMPJ15XJ5M');
 

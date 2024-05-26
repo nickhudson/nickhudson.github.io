@@ -7,7 +7,7 @@ import sys
 #image handler
 from pyodide.http import open_url
 from pyodide.ffi import create_proxy, to_js
-from js import document, console, alert, Object, FileReader, encodeURIComponent, processHTML 
+from js import document, console, alert, Object, FileReader, encodeURIComponent, trackInput, processHTML 
 import base64
 from pathlib import Path
 #custom scripts
@@ -22,6 +22,7 @@ fileTypes = [
 	'text/html', 
 	'message/rfc822'
 ]
+
 uploadInput = document.getElementById('upload')
 processButton = document.getElementById('process')
 downloadButton = document.getElementById('download')
@@ -74,7 +75,8 @@ async def read_file(e):
 
 			reader.onload = onLoadEvent
 			reader.readAsText(f)
-	
+
+	trackInput(e)
 	return
 
 async def process_file(e):
@@ -92,6 +94,7 @@ async def process_file(e):
 			uploadInput.value = ''
 
 			processButton.disabled = True
+			trackInput(e)
 
 			if updatedHTML.status == 'error':
 				if elData.viewMode == 'code':
@@ -120,6 +123,8 @@ def download_file(e):
 		tag.click()
 		document.body.removeChild(tag)
 
+		trackInput(e)
+
 def clear_file(e):
 	e.preventDefault()
 
@@ -132,11 +137,13 @@ def clear_file(e):
 		if viewModeEl.style.visibility == 'hidden':
 			viewModeEl.style.visibility = 'visible'
 
+		trackInput(e)
+
 def change_view(e):
 	e.preventDefault()
 
 	elData = e.target.dataset
-	fileData = TEMP_FILE[len(TEMP_FILE) - 1]['data']
+	trackInput(e)
 
 	if elData.viewMode == 'design':
 		elData.viewMode = 'code'
@@ -155,8 +162,6 @@ async def fetch_req(url):
 	return response
 
 async def main():
-	#task = await fetch_req("https://dummyjson.com/products/1")
-
 	fileEvent = create_proxy(read_file)
 	processEvent = create_proxy(process_file)
 	downloadEvent = create_proxy(download_file)
@@ -166,6 +171,7 @@ async def main():
 	uploadInput.accept = ','.join(fileTypes)
 
 	# Event Listeners
+	uploadInput.addEventListener('click', trackInput)
 	uploadInput.addEventListener('change', fileEvent)
 	processButton.addEventListener('click', processEvent)
 	downloadButton.addEventListener('click', downloadEvent)
