@@ -1,6 +1,6 @@
 import os
 
-#TODO WE COULD PROBABLY MAKE THIS INTO A CLASS
+# TODO WE COULD PROBABLY MAKE THIS INTO A CLASS
 # Config & User settings
 config = {
         'darkMode': {
@@ -56,6 +56,6 @@ config = {
 def get_config():
     return config
 
-#TODO Need to be more robust
+# TODO Need to be more robust
 def set_config(key, val):
     config[key] = val

@@ -1,5 +1,22 @@
-// Google Analytics
+// Google Analytics & Tag Manager
 window.dataLayer = window.dataLayer || [];
+
+(function (w, d, s, l, i) { // Google Tag Manager script
+	w[l] = w[l] || []; 
+	
+	w[l].push({
+		'gtm.start': new Date().getTime(), 
+		event: 'gtm.js'
+	}); 
+	
+	var f = d.getElementsByTagName(s)[0],
+			j = d.createElement(s), 
+			dl = l != 'dataLayer' ? '&l=' + l : ''; 
+			
+			j.async = true; 
+			j.src ='https://www.googletagmanager.com/gtm.js?id=' + i + dl; 
+			f.parentNode.insertBefore(j, f);
+})(window, document, 'script', 'dataLayer', 'GTM-WFK8SSSR');
 
 function gtag() {
 	dataLayer.push(arguments);
@@ -8,7 +25,7 @@ function gtag() {
 function trackInput(event='') {
 	if (event) {
 		const targ = event?.target,
-					labels = targ.labels ? targ.labels[0] : undefined;
+					label = targ.labels ? targ.labels[0] : undefined;
 
 		gtag('event', 'user_input', {
 			input_type: event?.type,
@@ -20,11 +37,11 @@ function trackInput(event='') {
 				targ.alt ||
 				'input',
 			description:
+				targ.name ||
+				targ.alt ||
 				targ.innerText ||
 				targ.outerText ||
-				labels?.innerText ||
-				targ.alt ||
-				targ.name ||
+				label?.innerText ||
 				targ.placeholder ||
 				'N/A'
 		});
@@ -59,6 +76,24 @@ function pyToJs(o) {
 
 	return pyscript.interpreter.globals.get(o) || o;
 };
+
+function json(data) {
+	try {
+		return JSON.parse(data);
+	} catch {
+		return false;
+	}
+}
+
+function typeOf(o) {
+	if (
+		Array.isArray(o) || 
+		Array.isArray(json(o.toString()))
+	)
+		return 'array';
+	
+	return typeof o;
+}
 
 // Simple fetch function, returns tthe response data as text
 function urlToText(url, file={dyn: false}) {

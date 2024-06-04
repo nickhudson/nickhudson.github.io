@@ -5,25 +5,56 @@
 		<meta name="description" content="Make your emails dark-mode friendly with just a click of a button!">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="./css/styles.css" />
-		<link rel="stylesheet" href="https://pyscript.net/releases/2024.3.1/core.css" />
+		<!--google-analytics-->
 		<script async src="https://www.googletagmanager.com/gtag/js?id=G-WMPJ15XJ5M"></script>
+		<!--//-->
 		<script src="./scripts/js/main.js"></script>
+		<!--pyscript-->
 		<script type="module" src="https://pyscript.net/releases/2024.3.1/core.js"></script>
-		<script type="module" src="./scripts/js/plugins/splash_screen.js"></script>
+		<script type="module" src="./scripts/js/plugins/splash_screen.js" /></script>
 	</head>
-	<body>
+	<body ontouchstart>
+		<!--google-tag-manager-->
+		<noscript>
+			<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WFK8SSSR" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+		</noscript>
+		<!--splash-screen-->
 		<dialog id="splash">
 			<img id="sp-logo" src="./images/dmify-logo-lgt-sq-002.svg" width="350" />
 			<p>Loading...</p>
 		</dialog>
+		<!--app-container-->
 		<section class="main">
 			<img id="mn-logo" src="./images/dmify-logo-lgt-ls-002.svg" height="56" />
-			<form id="form-upload">
-				<label for="upload">Upload a file:</label>
-				<input id="upload" type="file" />
-				<button type="button" id="process" disabled>Update File</button>
-				<button type="button" id="download" disabled>Download File</button>
-			</form>
+			<!--upload-->
+			<section id="handler">
+				<button type="button" id="info" class="pop-button" name="info" popovertarget="how-to">i</button>
+				<form id="form-upload">
+					<label for="upload">Upload a file:</label>
+					<input id="upload" type="file" />
+					<button type="button" id="process" disabled>Update File</button>
+					<button type="button" id="download" disabled>Download File</button>
+				</form>
+				<div id="how-to" class="popover" popover>
+					<div class="pop-wrapper">
+						<img class="pop-arrow" src="./images/triangle-001.svg" height="15" />
+						<div class="pop-main">
+							<h3>Transform Your Email to Dark Mode!</h3>
+							<ol>
+								<li><strong>Choose Your File:</strong> Select an email file (.html or .htm) from your computer.</li>
+								<li><strong>Click "Update File":</strong> See your email "auto-magically" transform into dark mode!</li>
+								<li><strong>Preview in Dark Mode:</strong> Ensure your computer is set to dark mode to view the changes.  Toggle back and forth between dark and light modes to see how your email will be experienced by the end user at different points of the day!</li>
+							</ol>
+							<h3>Compatibility Notes:</h3>
+							<ul>
+								<li>Supported file types: .html, .htm, (coming soon: .eml)</li>
+								<li>Optimal email width: 600px to 700px</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</section>
+			<!--content-->
 			<section id="content" class="hidden">
 				<nav id="content-nav">
 					<a class="close" href="#"><img src="./images/close-001.svg" width="36" alt="Clear Content" /></a>
@@ -33,6 +64,7 @@
 				<pre id="output-code" class="hidden"></pre>
 			</section>
 		</section>
+		<!--py-custom-->
 		<script type="py" src="./scripts/python/main.py" config="./pyscript.toml"></script>
 	</body>
 </html>

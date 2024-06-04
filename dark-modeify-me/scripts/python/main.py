@@ -7,7 +7,8 @@ import sys
 #image handler
 from pyodide.http import open_url
 from pyodide.ffi import create_proxy, to_js
-from js import document, console, alert, Object, FileReader, encodeURIComponent, trackInput, processHTML 
+from js import window, document, console, alert, Object, parseInt, setTimeout, clearTimeout, FileReader, encodeURIComponent, ResizeObserver, typeOf, trackInput, processHTML 
+import math
 import base64
 from pathlib import Path
 #custom scripts
@@ -23,10 +24,16 @@ fileTypes = [
 	'message/rfc822'
 ]
 
+currWinWidth = 0
+
+# DOM Elements
+infoButton = document.getElementById('info')
 uploadInput = document.getElementById('upload')
 processButton = document.getElementById('process')
 downloadButton = document.getElementById('download')
 
+popoverEls = document.getElementsByClassName('popover')
+infoEl = document.getElementById('how-to')
 contentEl = document.getElementById('content')
 outputEl = document.getElementById('output')
 outputCodeEl = document.getElementById('output-code')
@@ -36,12 +43,121 @@ viewModeEl = contentEl.querySelector('#view-mode')
 #set_config("test", "test")
 
 # Functions
-def hideShowEl(hideEl, showEl, cl):
+def toggle_elem(hideEl, showEl, cl):
 	hideEl.classList.add(cl)
 	showEl.classList.remove(cl)
 
 	if len(showEl.classList) == 0:
 		showEl.removeAttribute('class')
+
+async def popover_pos(e, self = ''):
+	if hasattr(e, 'offsetTop'):
+		popBtn = e
+	else:
+		popBtn = infoButton
+		
+	global currWinWidth
+
+	popElem = popBtn.popoverTargetElement
+	popWrapper = popElem.getElementsByClassName('pop-wrapper')[0]
+	popArrow = popElem.getElementsByClassName('pop-arrow')[0]
+
+	popWrapLeft = popWrapper.offsetLeft
+	popWrapRight = popWrapper.getBoundingClientRect().right
+	popBtnLeft = popBtn.offsetLeft
+	popArrowLeft = popArrow.getBoundingClientRect().left
+
+	popWrapWidth = popWrapper.getBoundingClientRect().width
+	popBtnWidth = popBtn.offsetWidth
+	popArrowWidth = popArrow.getBoundingClientRect().width
+
+	popWrapMidPnt = popWrapLeft + (popWrapWidth / 2)
+	popBtnMidPnt = popBtnLeft + (popBtnWidth / 2)
+	popArrowMidPnt = popArrowLeft + (popArrowWidth / 2)
+
+	topMargin = 15
+	popElPad = parseInt(window.getComputedStyle(popElem).getPropertyValue('padding'))
+
+	async def popelem_pos():
+		global currWinWidth
+		
+		popWrapper.style.top = (
+			popBtn.offsetTop + 
+			popBtn.offsetHeight -
+			popElPad + 
+			topMargin
+		)
+		
+		if window.innerWidth > 800:
+			if popWrapLeft <= popElPad and popWrapMidPnt >= popBtnMidPnt:
+				popWrapper.style.margin = 'initial'
+				popWrapper.style.left = 'auto'
+				popWrapper.style.float = 'left'
+			elif popBtnMidPnt > window.innerWidth / 2 and popWrapRight >= window.innerWidth - popElPad and popWrapLeft <= (popBtnLeft - popBtnWidth):
+				popWrapper.style.margin = 'initial'
+				popWrapper.style.left = 'auto'
+				popWrapper.style.float = 'right'
+			else:
+				popWrapper.style.margin = 'initial'
+				popWrapper.style.float = 'none'
+				popWrapper.style.left = (
+					popBtnMidPnt -
+					(popWrapWidth / 2) -
+					popElPad
+				)
+
+			currWinWidth = window.innerWidth
+		else: 
+			popWrapper.style.float = 'none'
+			popWrapper.style.left = 'auto'
+			popWrapper.style.margin = '0 auto'
+
+	def poparrow_pos():
+		clearTimeout(create_proxy(poparrow_pos))
+
+		def pa_pos_left():
+			clearTimeout(pa_pos_left)
+
+			adjustForPopBtn = 0
+			
+			if math.floor(popBtnWidth) >= math.floor(popArrowWidth):
+				adjustForPopBtn = popBtnWidth / 2
+
+			popArrow.style.left = popBtnLeft - popWrapLeft - (popElPad / 2) + abs(popArrowWidth-popBtnWidth) + adjustForPopBtn
+			
+		if abs(popBtnMidPnt-popArrowMidPnt) > 4:
+			popArrow.style.margin = '0em 0em -2px'
+			popArrow.style.position = 'relative'
+			setTimeout(pa_pos_left(), 0)
+		else:
+			popArrow.removeAttribute('style')
+
+	await popelem_pos()
+	setTimeout(create_proxy(poparrow_pos), 500)
+
+async def toggle_popover(e):
+	e.preventDefault()
+	
+	if hasattr(e.target, 'popoverTargetElement'):
+		popBtn = e.target
+	else:
+		popBtn = infoButton
+
+	popElem = popBtn.popoverTargetElement
+	popoverProxy = create_proxy(popover_pos)
+	popoverResize = ResizeObserver.new(popoverProxy)
+
+	trackInput(e)
+
+	if e.type == 'mouseover':
+		popElem.showPopover()
+		await popover_pos(popBtn)
+		popoverResize.observe(document.body)
+
+	if e.type == 'click' and hasattr(popElem, 'matches') and popElem.matches(':popover-open'):
+		popElem.hidePopover()
+	elif e.type == 'click' and hasattr(e.target, 'popoverTargetElement') and e.target.popoverTargetElement is not None:
+		popElem.showPopover()
 
 def read_complete(e):
 	loadedFile = uploadInput.files.item(0)
@@ -100,7 +216,7 @@ async def process_file(e):
 				if elData.viewMode == 'code':
 					elData.viewMode = 'design'
 					viewModeEl.innerHTML = 'View Code'
-					hideShowEl(outputCodeEl, outputEl, 'hidden')
+					toggle_elem(outputCodeEl, outputEl, 'hidden')
 				
 				viewModeEl.style.visibility = 'hidden'
 			else:
@@ -149,19 +265,20 @@ def change_view(e):
 		elData.viewMode = 'code'
 		e.target.innerHTML = 'View Design'
 
-		hideShowEl(outputEl, outputCodeEl, 'hidden')
+		toggle_elem(outputEl, outputCodeEl, 'hidden')
 	else: 
 		elData.viewMode = 'design'
 		e.target.innerHTML = 'View Code'
 
-		hideShowEl(outputCodeEl, outputEl, 'hidden')
+		toggle_elem(outputCodeEl, outputEl, 'hidden')
 		
-#calls get_fetch(url, type)
+# Calls get_fetch(url, type)
 async def fetch_req(url):
 	response = await get_fetch(url)
 	return response
 
 async def main():
+	popoverEvent = create_proxy(toggle_popover)
 	fileEvent = create_proxy(read_file)
 	processEvent = create_proxy(process_file)
 	downloadEvent = create_proxy(download_file)
@@ -171,6 +288,8 @@ async def main():
 	uploadInput.accept = ','.join(fileTypes)
 
 	# Event Listeners
+	infoEl.addEventListener('click', popoverEvent)
+	infoButton.addEventListener('mouseover', popoverEvent)
 	uploadInput.addEventListener('click', trackInput)
 	uploadInput.addEventListener('change', fileEvent)
 	processButton.addEventListener('click', processEvent)
