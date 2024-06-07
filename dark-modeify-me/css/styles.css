@@ -536,8 +536,8 @@ label[for=upload] {
 		font-size: 12px;
 	}
 
-	#form-upload {
-		max-width: 24em;
+	#form-upload, .pop-wrapper {
+		max-width: 40em;
 	}
 
 	.pop-arrow {

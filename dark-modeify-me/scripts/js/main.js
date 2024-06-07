@@ -30,12 +30,12 @@ function trackInput(event='') {
 		gtag('event', 'user_input', {
 			input_type: event?.type,
 			js_name: event?.constructor.name,
-			value:
+			input_html:
 				targ.value ||
 				targ.outerHTML ||
 				targ.innerHTML ||
 				targ.alt ||
-				'input',
+				'N/A',
 			description:
 				targ.name ||
 				targ.alt ||
@@ -43,7 +43,7 @@ function trackInput(event='') {
 				targ.outerText ||
 				label?.innerText ||
 				targ.placeholder ||
-				'N/A'
+				'input'
 		});
 	}
 }
